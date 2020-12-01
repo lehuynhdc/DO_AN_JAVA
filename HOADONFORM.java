@@ -5,10 +5,14 @@
  */
 package hoadon;
 
+import java.io.*;
 import java.text.*;
 import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.table.DefaultTableModel;
 //import java.util.Vector;
 
 /**
@@ -20,19 +24,45 @@ public class HOADONFORM extends javax.swing.JFrame {
     /**
      * Creates new form HOADONFORM
      */
+    private List<String> dsMua =  new Vector<>();
+    private List<Integer> arraySL = new Vector<>();
     public HOADONFORM() {
         initComponents();
     }
     public HOADONFORM(String tenNV, String maHD, List<String> list, LocalDateTime thoiGianXuat,long tongTien) {
         initComponents();
-        String temp;
+        String temp,s1[];
         this.inTenNV.setText(tenNV);
         this.inMaHD.setText(maHD);
-//        this.DSMuaHang;
         temp = thoiGianXuat.format(DateTimeFormatter.ofPattern("d/MMM/uuuu HH:mm:ss"));
         this.inTG.setText(temp);
-        temp = String.valueOf(tongTien); 
+        temp = String.valueOf(tongTien);
         this.inTongTien.setText(temp + " vnđ");
+        
+        DefaultTableModel model = new DefaultTableModel();
+        String a[] = {"       STT", "   Mã Sách", "  Tên Sách", "  Số Lượng", "   Giá Tiền"};
+        model.setColumnIdentifiers(a);
+        
+        ArrayList arrRows = new ArrayList();
+        int j = 0;
+        List<Integer> arrSL = this.soLuongSach(list);
+        arrSL = this.editArrSL(list, arrSL);
+        this.arraySL = arrSL;
+        list = this.editListDS(list);
+        this.dsMua = list;
+        for(String i : list) {            
+            s1 = i.split("-");
+            arrRows.add(String.valueOf(j+1));
+            arrRows.add(String.valueOf(s1[0]));
+            arrRows.add(String.valueOf(s1[1]));
+            arrRows.add(String.valueOf(arrSL.get(j)));
+            arrRows.add(String.valueOf(s1[2]));
+            model.addRow(arrRows.toArray());
+            arrRows.clear();
+            j++;
+        }
+        
+        this.DSMuaHang.setModel(model);
     }
 
     /**
@@ -54,7 +84,7 @@ public class HOADONFORM extends javax.swing.JFrame {
         inTenNV = new javax.swing.JLabel();
         inMaHD = new javax.swing.JLabel();
         inTongTien = new javax.swing.JLabel();
-        btn_Close = new javax.swing.JButton();
+        btn_Finish = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -66,44 +96,51 @@ public class HOADONFORM extends javax.swing.JFrame {
 
         DSMuaHang.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {"         1", null, null, null, null},
-                {"         2", null, null, null, null},
-                {"         3", null, null, null, null},
-                {"         4", null, null, null, null},
-                {"         5", null, null, null, null},
-                {"         6", null, null, null, null},
-                {"         7", null, null, null, null},
-                {"         8", null, null, null, null},
-                {"         9", null, null, null, null},
-                {"         10", null, null, null, null},
-                {"         11", null, null, null, null},
-                {"         12", null, null, null, null},
-                {"         13", null, null, null, null},
-                {"         14", null, null, null, null},
-                {"         15", null, null, null, null},
-                {"         16", null, null, null, null},
-                {"         17", null, null, null, null},
-                {"         18", null, null, null, null},
-                {"         19", null, null, null, null},
-                {"         20", null, null, null, null},
-                {"         21", null, null, null, null},
-                {"         22", null, null, null, null},
-                {"         23", "", null, null, null},
-                {"         24", null, null, null, null},
-                {"         25", null, null, null, null}
+                {"1", "s1", null, null, null},
+                {"2", null, null, null, null},
+                {"3", null, null, null, null},
+                {"4", null, null, null, null},
+                {"5", null, null, null, null},
+                {"6", null, null, null, null},
+                {"7", null, null, null, null},
+                {"8", null, null, null, null},
+                {"9", null, null, null, null},
+                {"10", null, null, null, null},
+                {"11", null, null, null, null},
+                {"12", null, null, null, null},
+                {"13", null, null, null, null},
+                {"14", null, null, null, null},
+                {"15", null, null, null, null},
+                {"16", null, null, null, null},
+                {"17", null, null, null, null},
+                {"18", null, null, null, null},
+                {"19", null, null, null, null},
+                {"20", null, null, null, null},
+                {"21", null, null, null, null},
+                {"22", null, null, null, null},
+                {"23", "", null, null, null},
+                {"24", null, null, null, null},
+                {"25", null, null, null, null}
             },
             new String [] {
-                "       STT", "   Mã Sách", "  Tên Sách", "  Số Lượng", "   Giá Tiền"
+                "STT", "Mã Sách", "               Tên Sách", "Số Lượng", "   Giá Tiền"
             }
         ));
         jScrollPane2.setViewportView(DSMuaHang);
+        if (DSMuaHang.getColumnModel().getColumnCount() > 0) {
+            DSMuaHang.getColumnModel().getColumn(0).setPreferredWidth(5);
+            DSMuaHang.getColumnModel().getColumn(1).setPreferredWidth(30);
+            DSMuaHang.getColumnModel().getColumn(2).setPreferredWidth(150);
+            DSMuaHang.getColumnModel().getColumn(3).setPreferredWidth(30);
+            DSMuaHang.getColumnModel().getColumn(4).setPreferredWidth(50);
+        }
 
         MHD.setText("      Mã Hóa Đơn");
 
-        btn_Close.setText("Close");
-        btn_Close.addMouseListener(new java.awt.event.MouseAdapter() {
+        btn_Finish.setText("Finish");
+        btn_Finish.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                btn_CloseMouseClicked(evt);
+                btn_FinishMouseClicked(evt);
             }
         });
 
@@ -122,18 +159,20 @@ public class HOADONFORM extends javax.swing.JFrame {
                     .addComponent(inTenNV, javax.swing.GroupLayout.DEFAULT_SIZE, 214, Short.MAX_VALUE)
                     .addComponent(inMaHD, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(190, 190, 190))
-            .addGroup(layout.createSequentialGroup()
-                .addGap(40, 40, 40)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(TC, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(inTongTien, javax.swing.GroupLayout.PREFERRED_SIZE, 115, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(46, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addGap(0, 0, Short.MAX_VALUE)
-                .addComponent(btn_Close))
+                .addComponent(btn_Finish))
+            .addGroup(layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 452, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                        .addGap(286, 286, 286)
+                        .addComponent(TC, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(inTongTien, javax.swing.GroupLayout.PREFERRED_SIZE, 115, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(48, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -153,24 +192,35 @@ public class HOADONFORM extends javax.swing.JFrame {
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(TGXuat, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(inTG, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 23, Short.MAX_VALUE)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 435, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(TC, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(inTongTien, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btn_Close))
+                .addComponent(btn_Finish))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void btn_CloseMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btn_CloseMouseClicked
+    private void btn_FinishMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btn_FinishMouseClicked
         // TODO add your handling code here:
+        HoaDon hd = new HoaDon();
+        try {
+            hd.ghiFile(this.getMAHD());
+        } catch (IOException ex) {
+            Logger.getLogger(HOADONFORM.class.getName()).log(Level.SEVERE, null, ex);
+        }
         this.setVisible(false);
+        try {
+            this.ghiFile();
+        } catch (IOException ex) {
+            Logger.getLogger(HOADONFORM.class.getName()).log(Level.SEVERE, null, ex);
+        }
         System.exit(0);
-    }//GEN-LAST:event_btn_CloseMouseClicked
+    }//GEN-LAST:event_btn_FinishMouseClicked
 
     /**
      * @param args the command line arguments
@@ -213,16 +263,17 @@ public class HOADONFORM extends javax.swing.JFrame {
     private javax.swing.JLabel TC;
     private javax.swing.JLabel TGXuat;
     private javax.swing.JLabel TenNV;
-    private javax.swing.JButton btn_Close;
+    private javax.swing.JButton btn_Finish;
     private javax.swing.JLabel inMaHD;
     private javax.swing.JLabel inTG;
     private javax.swing.JLabel inTenNV;
     private javax.swing.JLabel inTongTien;
     private javax.swing.JScrollPane jScrollPane2;
     // End of variables declaration//GEN-END:variables
+    
     //setter and getter
     public void setTenNV(String ten){
-        this.TenNV.setText(ten);
+        this.inTenNV.setText(ten);
     }
     public void setMAHD(String id){
         this.inMaHD.setText(id);
@@ -268,6 +319,12 @@ public class HOADONFORM extends javax.swing.JFrame {
             }
         ));
     }
+    public void setDSMua(List<String> list){
+        this.dsMua = list;
+    }
+    public void setArraySL(List<Integer> list){
+        this.arraySL = list;
+    }
     public String getTenNV(){
         return this.inTenNV.getText();
     }
@@ -279,5 +336,77 @@ public class HOADONFORM extends javax.swing.JFrame {
     }
     public String getTG(){
         return this.inTG.getText();
+    }
+    public List<String> getDSMua(){
+        return dsMua;
+    }
+    public List<Integer> getArraySL(){
+        return arraySL;
+    }
+    
+    //cac ham xu ly
+    public List<Integer> soLuongSach(List<String> list){
+        int soLuong = 0;
+        ArrayList<Integer> arrSL = new ArrayList<>();
+        for(String i : list){
+            for(String j : list){
+                if(i == j){
+                    soLuong++;
+                }
+            } 
+            arrSL.add(soLuong);
+            soLuong = 0;
+        }
+        return arrSL;
+    }
+    public List<String> editListDS(List<String> list){
+        for(int i = 0;i < list.size();i++){
+            for(int j = i+1;j < list.size();j++){
+                if(list.get(i) == list.get(j)){
+                    list.remove(j);
+                }
+            }
+        }
+        return list;
+    }
+    public List<Integer> editArrSL(List<String> list,List<Integer> arrRows){
+        for(int i = 0;i < list.size();i++){
+            for(int j = i+1;j < list.size();j++){
+                if(list.get(i) == list.get(j)){
+                    arrRows.remove(j);
+                    list.remove(j);
+                }
+            }
+        }
+        return arrRows;
+    }
+    public  void ghiFile()throws IOException{
+        File file = new File("D:/HoaDon.txt"); 
+        OutputStream outputStream = new FileOutputStream(file,true);
+        OutputStreamWriter outputStreamWriter = new OutputStreamWriter(outputStream);
+        List<String> dsMua = this.getDSMua(),temp = new Vector<>();
+        List<Integer> arrSL = this.getArraySL();
+        for(int i =0 ; i < dsMua.size();i++){
+            temp.add(dsMua.get(i).concat("-" + arrSL.get(i).toString()));   
+        }
+        // Dùng để xuống hàng        
+        outputStreamWriter.write(this.getMAHD());
+        outputStreamWriter.write("\n");
+        outputStreamWriter.write(this.getTenNV());
+        outputStreamWriter.write("\n");
+        outputStreamWriter.write(this.getTG());
+        outputStreamWriter.write("\n");
+        for(String i : temp){
+            outputStreamWriter.write(i);
+            outputStreamWriter.write("\n");
+        }
+        outputStreamWriter.write(this.getTongTien());
+        outputStreamWriter.write("\n");
+        outputStreamWriter.write("-------------------------------------------------------------------------------------");
+        outputStreamWriter.write("\n");
+        
+        // Đây là phương thức quan trọng!
+        // Nó sẽ bắt chương trình chờ ghi dữ liệu xong thì mới kết thúc chương trình.
+        outputStreamWriter.flush();
     }
 }

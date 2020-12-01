@@ -7,16 +7,7 @@ package hoadon;
 import java.time.*;
 import java.io.*;
 import java.util.*;
-import javax.swing.JFrame;
-//import java.io.BufferedReader;
-//import java.io.FileWriter;
-//import java.io.File;
-//import java.io.FileReader;
-//import java.io.IOException;
-//import java.util.List;
-//import java.util.ArrayList;
-//import java.util.Iterator;
-//import javax.swing.*;
+
 /**
  *
  * @author DELL
@@ -123,17 +114,17 @@ public class HoaDon {
         File file = new File("D:/IDHoaDon.txt");
         OutputStream outputStream = new FileOutputStream(file,true);
         OutputStreamWriter outputStreamWriter = new OutputStreamWriter(outputStream);
-        // Dùng để xuống hàng
-        outputStreamWriter.write("\n");
+        // Dùng để xuống hàng        
         outputStreamWriter.write(str);
-            
+        outputStreamWriter.write("\n");  
+        
         // Đây là phương thức quan trọng!
         // Nó sẽ bắt chương trình chờ ghi dữ liệu xong thì mới kết thúc chương trình.
         outputStreamWriter.flush();
     }
     public String autoSetIDHD(){
         String line,idEnd="";
-        int check=0;
+        int check = 0;
         try {
             //Bước 1: Tạo đối tượng luồng và liên kết nguồn dữ liệu
              File f = new File("D:/IDHoaDon.txt");
@@ -152,12 +143,15 @@ public class HoaDon {
                        idEnd = String.valueOf(temp);
                     }
                 }
-                if(line == null && check ==0){
+                if(line == null && check == 0 && idEnd  != ""){
                        idEnd = idEnd.split("D")[1];
                        int temp = Integer.parseInt(idEnd);
                        temp++;
                        idEnd = String.valueOf(temp);
-                    }
+                }
+                else if(line == null && check == 0 && idEnd  == ""){
+                    idEnd = String.valueOf("1");
+                }
                 //Bước 3: Đóng luồng
             }            
             br.close();
@@ -269,7 +263,6 @@ public class HoaDon {
        List<String> listIDSach = new Vector<>();
        listIDSach = hoaDon.leakDS();
        hoaDon.setListIDSach(listIDSach);
-       hoaDon.taoFormGhiHD(hoaDon);
-       
+       hoaDon.taoFormGhiHD(hoaDon);       
     }    
 }

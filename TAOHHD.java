@@ -4,8 +4,12 @@
  * and open the template in the editor.
  */
 package hoadon;
+import java.awt.Component;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.time.*;
 import java.util.*;
+import javax.swing.JOptionPane;
 /**
  *
  * @author DELL
@@ -15,7 +19,9 @@ public class TAOHHD extends javax.swing.JFrame {
 //    /**
 //     * Creates new form TAOHHD
 //     */
-    private List<String> ds =  new Vector<>();
+    List<String> ds =  new Vector<>();
+    boolean soLuongClick = true;
+    List<Integer> arrSL = null;
     public TAOHHD() {
         initComponents();
     }
@@ -24,6 +30,18 @@ public class TAOHHD extends javax.swing.JFrame {
         this.inTenNV.setText(tenNV);
         this.inMAHD.setText(maHD);
         this.dsCacSach.setListData((Vector<? extends String>) list);
+        this.soLuongSach.setText("");
+//        String temp = this.soLuongSach.getText();
+//        this.soLuongSach.addActionListener(new ActionListener() {
+//            public void actionPerformed(ActionEvent e) {
+//                if(temp == ""){
+//                    System.out.println(".actionPerformed()");
+//                    return;
+//                }
+//            }
+//        });
+        this.nhapSL.setVisible(false);
+        this.soLuongSach.setVisible(false);        
     }
 //
 //    /**
@@ -43,6 +61,8 @@ public class TAOHHD extends javax.swing.JFrame {
         btnXuatHD = new javax.swing.JButton();
         inMAHD = new javax.swing.JLabel();
         inTenNV = new javax.swing.JLabel();
+        soLuongSach = new javax.swing.JTextField();
+        nhapSL = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setBackground(new java.awt.Color(204, 204, 204));
@@ -74,6 +94,14 @@ public class TAOHHD extends javax.swing.JFrame {
             }
         });
 
+        soLuongSach.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                soLuongSachMouseClicked(evt);
+            }
+        });
+
+        nhapSL.setText("    Nhập Số Lượng");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -93,9 +121,11 @@ public class TAOHHD extends javax.swing.JFrame {
                 .addContainerGap()
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 481, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(btnHuyHD)
-                    .addComponent(btnXuatHD))
+                    .addComponent(btnXuatHD)
+                    .addComponent(soLuongSach)
+                    .addComponent(nhapSL, javax.swing.GroupLayout.DEFAULT_SIZE, 119, Short.MAX_VALUE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
@@ -110,33 +140,64 @@ public class TAOHHD extends javax.swing.JFrame {
                     .addComponent(TenNV, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(inTenNV, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 551, Short.MAX_VALUE))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(btnXuatHD)
-                .addGap(18, 18, 18)
-                .addComponent(btnHuyHD)
-                .addGap(27, 27, 27))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(4, 4, 4)
+                        .addComponent(nhapSL, javax.swing.GroupLayout.PREFERRED_SIZE, 21, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(soLuongSach, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(btnXuatHD)
+                        .addGap(18, 18, 18)
+                        .addComponent(btnHuyHD)
+                        .addGap(27, 27, 27))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 551, Short.MAX_VALUE)))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    ///chua xong module nay******************************************************************
+    
     private void dsCacSachMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_dsCacSachMouseClicked
-        // TODO add your handling code here:        
+        // TODO add your handling code here: 
+        Component frame = null;
+        if(this.ktDanhSach(this.dsCacSach.getSelectedValue())){
+            JOptionPane.showMessageDialog(frame,"Đã tồn tại trong danh sách.");
+            return;
+        }
+//        if(!this.soLuongClick){
+//            this.nhapSL.setVisible(false);
+//            this.soLuongSach.setVisible(false);
+//            return;
+//        }
+//        this.soLuongClick = false;
+//        this.soLuongSach.setText("1");
+//        
+//        this.nhapSL.setVisible(true);
+//        this.soLuongSach.setVisible(true);
+        
+//        JOptionPane.showMessageDialog(frame,"Mời bạn nhập số lượng sách.");        
+        SOLUONGCLICK click = new SOLUONGCLICK();
+        click.setVisible(true);
+        this.setVisible(false);
+        
         this.ds.add(dsCacSach.getSelectedValue());
     }//GEN-LAST:event_dsCacSachMouseClicked
 
     private void btnXuatHDMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnXuatHDMouseClicked
         // TODO add your handling code here:
+        Component frame = null;
+        String temp = this.soLuongSach.getText();
+        if(temp.equals("")){
+            JOptionPane.showMessageDialog(frame,"Bạn chưa nhập số lượng sách.","ERROR",JOptionPane.ERROR_MESSAGE);
+            return;
+        }
         long tien = updateTongTien(this.ds);
         LocalDateTime thoiGianXuat = LocalDateTime.now();
         this.setVisible(false);
         HoaDon hd = new HoaDon(this.getTenNV(),this.getMAHD(),this.getList(),thoiGianXuat,tien);
         HOADONFORM hdf = new HOADONFORM(hd.getTenNV(),hd.getIDHoaDon(),hd.getListIDSach(),hd.getTGXuat(),tien);
-        hdf.setVisible(true);
-         
+        hdf.setVisible(true);    
     }//GEN-LAST:event_btnXuatHDMouseClicked
 
     private void btnHuyHDMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnHuyHDMouseClicked
@@ -144,6 +205,13 @@ public class TAOHHD extends javax.swing.JFrame {
         this.setVisible(false);
         System.exit(0);
     }//GEN-LAST:event_btnHuyHDMouseClicked
+
+    private void soLuongSachMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_soLuongSachMouseClicked
+        // TODO add your handling code here:
+        this.soLuongClick = true;
+        List<Integer> arrSL = null;
+        arrSL.add(Integer.valueOf(this.getSLSach()));
+    }//GEN-LAST:event_soLuongSachMouseClicked
 
     /**
      * @param args the command line arguments
@@ -174,6 +242,7 @@ public class TAOHHD extends javax.swing.JFrame {
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
+            @Override
             public void run() {
                 new TAOHHD().setVisible(true);
             }
@@ -189,9 +258,14 @@ public class TAOHHD extends javax.swing.JFrame {
     private javax.swing.JLabel inMAHD;
     private javax.swing.JLabel inTenNV;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JLabel nhapSL;
+    private javax.swing.JTextField soLuongSach;
     // End of variables declaration//GEN-END:variables
     
     //setter and getter
+    public void setArrSL(String ten){
+        this.inTenNV.setText(ten);
+    }
     public void setTenNV(String ten){
         this.inTenNV.setText(ten);
     }
@@ -210,6 +284,9 @@ public class TAOHHD extends javax.swing.JFrame {
     public List<String> getList(){
         return ds;
     }
+    public String getSLSach(){
+        return soLuongSach.toString();
+    }
     
     //các hàm xử lý 
     public long updateTongTien(List<String> ds){ 
@@ -218,5 +295,13 @@ public class TAOHHD extends javax.swing.JFrame {
             tien += Long.parseLong(item.split("-")[2]);                                                                 
         }
         return tien;
+    }
+    public boolean ktDanhSach(String str){
+        for(String s : this.ds){
+            if(s == str){
+                return true;
+            }
+        }        
+        return false;
     }
 }
